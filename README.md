@@ -3,7 +3,7 @@
 ## :collision: Important
 
 - This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-- Find full details of project spec [here](https://github.com/curtismenmuir/facts/SPEC.md)
+- Find full details of project spec [here](./SPEC.md)
 
 ## :arrow_up: How to setup project
 
@@ -44,3 +44,9 @@
 ## :cop: Linting
 
 - Run linter: `yarn lint`
+
+## :soon: Future Improvements
+
+- Format `attributes`, `securities` & `facts` into map / dictionary?
+  - Would allow for fast lookup of values (O1 space/time complexity)
+- Update UI with Green / Red popup values?
