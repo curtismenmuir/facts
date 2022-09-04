@@ -32,7 +32,7 @@ export function processDsl(query: string): string {
   }
 
   // Validate security exists
-  let securityItem = securities.find((item) => item.symbol === dsl.security);
+  const securityItem = securities.find((item) => item.symbol === dsl.security);
   if (!securityItem) {
     return Outputs.MISSING_SECURITY;
   }

@@ -70,7 +70,7 @@ export function validateExpression(expression: Expression): boolean {
  * @returns true / false
  */
 export function validateOperator(value: string) {
-  let validOperator = Operators.find((item) => item === value);
+  const validOperator = Operators.find((item) => item === value);
   if (!validOperator) {
     return false;
   }
