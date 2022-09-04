@@ -7,7 +7,9 @@
     "build": "rm -rf .next && next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "test:hot": "jest --env=jsdom --watch",
+    "test:coverage": "jest --env=jsdom --coverage"
   },
   "dependencies": {
     "next": "12.2.5",

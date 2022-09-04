@@ -1,7 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
 import styles from "./index.module.css";
+import { processDsl } from "../services/dsl";
 
 interface DSLExample {
   id: string;
@@ -65,8 +66,17 @@ const examples: readonly DSLExample[] = [
 ];
 
 const Home: NextPage = () => {
+  // Expression
   const [expression, setExpression] = useState<string>(examples[0].dsl);
-  const setDsl = (dsl: string) => () => setExpression(dsl);
+  const setDsl = (dsl: string) => () => {
+    setExpression(dsl);
+    setOutput("");
+  };
+  // Output
+  const [output, setOutput] = useState<string>("");
+  const onRun = () => {
+    setOutput(processDsl(expression));
+  };
 
   return (
     <>
@@ -92,15 +102,13 @@ const Home: NextPage = () => {
           </p>
           <nav
             className={styles.navigation}
-            aria-describedby={"pre-canned-description"}
-          >
+            aria-describedby={"pre-canned-description"}>
             {examples.map(({ id, label, dsl }) => (
               <button
                 type={"button"}
                 onClick={setDsl(dsl)}
                 key={id}
-                data-testid={`button-${id}`}
-              >
+                data-testid={`button-${id}`}>
                 {label}
               </button>
             ))}
@@ -120,14 +128,14 @@ const Home: NextPage = () => {
               setExpression(e.target.value)
             }
             rows={8}
-          ></textarea>
+          />
           <div className={[styles.message, styles.messageSuccess].join(" ")}>
             {"DSL query ran successfully!"}
           </div>
           <div className={[styles.message, styles.messageError].join(" ")}>
             {"There is a problem with your DSL query."}
           </div>
-          <button data-testid={"run-button"} type={"button"}>
+          <button data-testid={"run-button"} type={"button"} onClick={onRun}>
             {"Run"}
           </button>
         </div>
@@ -139,8 +147,9 @@ const Home: NextPage = () => {
             id={"dsl-output"}
             className={styles.field}
             readOnly
+            value={output}
             rows={1}
-          ></textarea>
+          />
         </div>
       </main>
     </>
