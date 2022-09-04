@@ -2,6 +2,8 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { ChangeEvent, useState } from "react";
 import styles from "./index.module.css";
+import { processDsl } from "../services/dsl";
+import { Examples } from "../constants";
 
 interface DSLExample {
   id: string;
@@ -9,64 +11,20 @@ interface DSLExample {
   dsl: string;
 }
 
-const examples: readonly DSLExample[] = [
-  {
-    id: "multiply",
-    label: "Simple multiplication",
-    dsl: `{
-  "expression": {"fn": "*", "a": "sales", "b": 2},
-  "security": "ABC"
-}`,
-  },
-  {
-    id: "divide",
-    label: "Simple division",
-    dsl: `{
-  "expression": {"fn": "/", "a": "price", "b": "eps"},
-  "security": "BCD"
-}`,
-  },
-  {
-    id: "nested",
-    label: "Nested expression",
-    dsl: `{
-  "expression": {
-    "fn": "-", 
-    "a": {"fn": "-", "a": "eps", "b": "shares"}, 
-    "b": {"fn": "-", "a": "assets", "b": "liabilities"}
-  },
-  "security": "CDE"
-}`,
-  },
-  {
-    id: "invalid-json",
-    label: "Invalid JSON",
-    dsl: `{
-  "expression": {"fn": "+", "a": "price", "b": "eps"},
-  "security": "BCD"
-`,
-  },
-  {
-    id: "invalid-dsl",
-    label: "Invalid DSL",
-    dsl: `{
-  "wrong": 123,
-  "security": "BCD"
-}`,
-  },
-  {
-    id: "missing-security",
-    label: "Missing security",
-    dsl: `{
-  "expression": {"fn": "*", "a": "sales", "b": 2},
-  "security": "ZZZ"
-}`,
-  },
-];
+const examples: readonly DSLExample[] = Examples;
 
 const Home: NextPage = () => {
+  // Expression
   const [expression, setExpression] = useState<string>(examples[0].dsl);
-  const setDsl = (dsl: string) => () => setExpression(dsl);
+  const setDsl = (dsl: string) => () => {
+    setExpression(dsl);
+    setOutput("");
+  };
+  // Output
+  const [output, setOutput] = useState<string>("");
+  const onRun = () => {
+    setOutput(processDsl(expression));
+  };
 
   return (
     <>
@@ -92,15 +50,13 @@ const Home: NextPage = () => {
           </p>
           <nav
             className={styles.navigation}
-            aria-describedby={"pre-canned-description"}
-          >
+            aria-describedby={"pre-canned-description"}>
             {examples.map(({ id, label, dsl }) => (
               <button
                 type={"button"}
                 onClick={setDsl(dsl)}
                 key={id}
-                data-testid={`button-${id}`}
-              >
+                data-testid={`button-${id}`}>
                 {label}
               </button>
             ))}
@@ -120,14 +76,14 @@ const Home: NextPage = () => {
               setExpression(e.target.value)
             }
             rows={8}
-          ></textarea>
+          />
           <div className={[styles.message, styles.messageSuccess].join(" ")}>
             {"DSL query ran successfully!"}
           </div>
           <div className={[styles.message, styles.messageError].join(" ")}>
             {"There is a problem with your DSL query."}
           </div>
-          <button data-testid={"run-button"} type={"button"}>
+          <button data-testid={"run-button"} type={"button"} onClick={onRun}>
             {"Run"}
           </button>
         </div>
@@ -137,10 +93,12 @@ const Home: NextPage = () => {
           <label htmlFor={"dsl-output"}>{"Output:"}</label>
           <textarea
             id={"dsl-output"}
+            data-testid={"output-text-area"}
             className={styles.field}
             readOnly
+            value={output}
             rows={1}
-          ></textarea>
+          />
         </div>
       </main>
     </>
